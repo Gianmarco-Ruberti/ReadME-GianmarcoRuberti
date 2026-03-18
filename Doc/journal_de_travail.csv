@@ -1,1 +1,2 @@
-Nom,Temps,État,Description
+Date,Nom,Temps,État,Description
+"18/03/2026","création du jdt","[45min]","[DONE]","création d'un script qui créé un jdt dans un csv"
