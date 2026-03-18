@@ -1,64 +1,67 @@
 #!/bin/bash
-
+ 
 # Config
 SINCE="2026-01-13"
 OUTPUT_DIR="Doc"
 OUTPUT_FILE="$OUTPUT_DIR/journal_de_travail.csv"
-
+ 
 mkdir -p "$OUTPUT_DIR"
-
-echo "🚀 Extraction chronologique avec séparation par date..."
-
-# En-tête CSV
+ 
+echo "🚀 Extraction propre en cours..."
+ 
+# 1. On écrit l'en-tête (écrase le fichier existant)
 echo "Date,Nom,Temps,État,Description" > "$OUTPUT_FILE"
-
-# %ad = Date (format YYYY-MM-DD) | %s = Titre | %b = Corps
+ 
+# 2. Git log avec séparateurs spéciaux
 git log --all --since="$SINCE" --reverse --date=format:'%d/%m/%Y' --pretty=format:%ad%x1f%s%x1f%b%x1e \
 | awk -v RS='\036' -F '\037' '
 NF {
     current_date = $1;
     nom_commit = $2;
-    description_detaillee = $3;
-    
-    # --- LOGIQUE DE SÉPARATION ---
-    # Si la date change par rapport au commit précédent, on saute une ligne
-    if (last_date != "" && last_date != current_date) {
-        print ",,,,"; # Ligne vide pour séparer visuellement dans Excel
-    }
-    last_date = current_date;
-
-    gsub(/\n/, " ", description_detaillee);
-
+    body = $3;
+ 
+    # Le séparateur de records peut laisser un saut de ligne en tête
+    gsub(/\r|\n/, "", current_date);
+    gsub(/^ +| +$/, "", current_date);
+ 
+    # Nettoyage des sauts de ligne pour éviter de casser le CSV
+    gsub(/\r|\n/, " ", nom_commit);
+    gsub(/\r|\n/, " ", body);
+   
+    full_text = nom_commit " " body;
+ 
+    # Initialisation
     temps = "[?]";
     etat = "[?]";
-
-    # Extraction du Temps [1h45min]
-    if (match(nom_commit, /\[[0-9hmin]+\]/)) {
-        temps = substr(nom_commit, RSTART, RLENGTH);
-        sub(/\[[0-9hmin]+\]/, "", nom_commit);
-    } else if (match(description_detaillee, /\[[0-9hmin]+\]/)) {
-        temps = substr(description_detaillee, RSTART, RLENGTH);
-        sub(/\[[0-9hmin]+\]/, "", description_detaillee);
+ 
+    # Extraction Temps [1h45min]
+    if (match(full_text, /\[[0-9hmin]+\]/)) {
+        temps = substr(full_text, RSTART, RLENGTH);
+        sub(/\[[0-9hmin]+\]/, "", full_text);
     }
-
-    # Extraction de l État [DONE]
-    if (match(nom_commit, /\[[A-Z]+\]/)) {
-        etat = substr(nom_commit, RSTART, RLENGTH);
-        sub(/\[[A-Z]+\]/, "", nom_commit);
-    } else if (match(description_detaillee, /\[[A-Z]+\]/)) {
-        etat = substr(description_detaillee, RSTART, RLENGTH);
-        sub(/\[[A-Z]+\]/, "", description_detaillee);
+   
+    # Extraction État [DONE]
+    if (match(full_text, /\[[A-Z]+\]/)) {
+        etat = substr(full_text, RSTART, RLENGTH);
+        sub(/\[[A-Z]+\]/, "", full_text);
     }
-
-    # Nettoyage final
-    gsub(/^ +| +$/, "", nom_commit);
-    gsub(/^ +| +$/, "", description_detaillee);
+ 
+    # NETTOYAGE FINAL : on double les guillemets pour le format CSV
     gsub(/"/, "\"\"", nom_commit);
-    gsub(/"/, "\"\"", description_detaillee);
-
-    # Affichage avec la Date au début
-    printf "\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n", current_date, nom_commit, temps, etat, description_detaillee;
+    gsub(/"/, "\"\"", full_text);
+    # On enlève les espaces en trop au début et à la fin
+    gsub(/^ +| +$/, "", nom_commit);
+    gsub(/^ +| +$/, "", full_text);
+ 
+    # SÉPARATION DES JOURS
+    if (last_date != "" && last_date != current_date) {
+        print "" >> "'$OUTPUT_FILE'";
+    }
+    last_date = current_date;
+ 
+    # ÉCRITURE DE LA LIGNE (Une seule fois, bien proprement)
+    printf "\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n", current_date, nom_commit, temps, etat, full_text >> "'$OUTPUT_FILE'";
 }
-' >> "$OUTPUT_FILE"
-
-echo "✨ Terminé ! Tes commits sont séparés par jour dans : $OUTPUT_FILE"
+'
+ 
+echo "✨ C'est fini ! Regarde ton fichier : $OUTPUT_FILE"

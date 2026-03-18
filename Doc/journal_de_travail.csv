@@ -1,2 +1,3 @@
 Date,Nom,Temps,État,Description
-"18/03/2026","création du jdt","[45min]","[DONE]","création d'un script qui créé un jdt dans un csv"
+"18/03/2026","création du jdt","[45min]","[DONE]","création du jdt  création d'un script qui créé un jdt dans un csv"
+"18/03/2026","correction du code pour mettre les donné au bon endroit","[12min]","[DONE]","correction du code pour mettre les donné au bon endroit  il ne trouvais pas le temps et l'état, il mettait le nom dans la description et ajout de la date"
