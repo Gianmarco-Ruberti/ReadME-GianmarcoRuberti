@@ -2,3 +2,5 @@ Date,Nom,Temps,État,Description
 "18/03/2026","création du jdt","[45min]","[DONE]","création du jdt  création d'un script qui créé un jdt dans un csv"
 "18/03/2026","correction du code pour mettre les donné au bon endroit","[12min]","[DONE]","correction du code pour mettre les donné au bon endroit  il ne trouvais pas le temps et l'état, il mettait le nom dans la description et ajout de la date"
 "18/03/2026","fix le retour a la ligne et un gillemet orphelin","[35min]","[DONE]","fix le retour a la ligne et un gillemet orphelin  il fesait un retour a la ligne entre le premier guillemet et la date"
+
+"25/03/2026","feat(jdt) : amélioration du get_commit avec la création d'un excel","[10]","[DONE]","feat(jdt) : amélioration du get_commit avec la création d'un excel   j'ai récupéré le projet de get_commit fait en collaboration avec Damien Rochat"
