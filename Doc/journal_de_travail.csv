@@ -4,3 +4,14 @@ Date,Nom,Temps,État,Description
 "18/03/2026","fix le retour a la ligne et un gillemet orphelin","[35min]","[DONE]","fix le retour a la ligne et un gillemet orphelin  il fesait un retour a la ligne entre le premier guillemet et la date"
 
 "25/03/2026","feat(jdt) : amélioration du get_commit avec la création d'un excel","[10]","[DONE]","feat(jdt) : amélioration du get_commit avec la création d'un excel   j'ai récupéré le projet de get_commit fait en collaboration avec Damien Rochat"
+"25/03/2026","feat(jdt)","[1]","[DONE]","feat(jdt)"
+"25/03/2026","feat(gitignore) : création du gitignore","[4]","[DONE]","feat(gitignore) : création du gitignore"
+"25/03/2026","feat(tag) : création de la page de tagManagement","[27]","[DONE]","feat(tag) : création de la page de tagManagement"
+"25/03/2026","feat(library) : création de la page pour la liste des livres","[26]","[DONE]","feat(library) : création de la page pour la liste des livres"
+"25/03/2026","feat(read) : création de la page de lecture","[38]","[DONE]","feat(read) : création de la page de lecture"
+"25/03/2026","feat(model) : création des models","[18]","[DONE]","feat(model) : création des models"
+"25/03/2026","feat(viewModel) : création des viewMOdels","[83]","[DONE]","feat(viewModel) : création des viewMOdels  j'ai du utilisé de l'IA pour m'aider"
+
+"01/04/2026","feat(service) création des services","[67]","[DONE]","feat(service) création des services   Bookservice: Le gestionnaire de livres TagService : Le gestionnaire de catégories"
+"01/04/2026","feat(resources) : mise des fichier de resources","[31]","[DONE]","feat(resources) : mise des fichier de resources"
+"01/04/2026","fix(backup) : mise des fichier de backup suite a un problème","[13]","[DONE]","fix(backup) : mise des fichier de backup suite a un problème"
