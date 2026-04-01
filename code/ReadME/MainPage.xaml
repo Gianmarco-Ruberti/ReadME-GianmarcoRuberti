@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ReadMe_perso.MainPage"
+             Title="ReadMe-perso">
+
+    <VerticalStackLayout
+        Padding="30"
+        Spacing="25"
+        VerticalOptions="Center"
+        HorizontalOptions="Fill">
+        
+        <Label
+            Text="📚"
+            FontSize="80"
+            HorizontalTextAlignment="Center" />
+
+        <Label
+            Text="Bienvenue dans ReadMe-perso"
+            Style="{StaticResource Headline}"
+            HorizontalTextAlignment="Center"
+            SemanticProperties.HeadingLevel="Level1" />
+
+        <Label
+            Text="Votre gestionnaire personnel de livres et de lectures"
+            Style="{StaticResource SubHeadline}"
+            HorizontalTextAlignment="Center"
+            SemanticProperties.HeadingLevel="Level2" />
+
+        <Frame 
+            CornerRadius="15"
+            Padding="20"
+            HasShadow="True"
+            BackgroundColor="#F5F5F5">
+            <VerticalStackLayout Spacing="10">
+                <Label 
+                    Text="✨ Fonctionnalités principales :"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    TextColor="#512BD4" />
+                <Label 
+                    Text="• Gérez votre bibliothèque de livres" />
+                <Label 
+                    Text="• Lisez vos livres avec la liseuse intégrée" />
+                <Label 
+                    Text="• Mémorisez votre progression de lecture" />
+                <Label 
+                    Text="• Organisez avec des tags personnalisés" />
+            </VerticalStackLayout>
+        </Frame>
+
+        <Button
+            Text="Commencer 🚀"
+            Clicked="OnStartClicked"
+            BackgroundColor="#512BD4"
+            TextColor="White"
+            CornerRadius="10"
+            Padding="20,15"
+            FontAttributes="Bold" />
+
+    </VerticalStackLayout>
+
+</ContentPage>

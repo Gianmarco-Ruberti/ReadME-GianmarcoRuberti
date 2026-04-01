@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="ReadMe_perso.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:ReadMe_perso"
+    xmlns:views="clr-namespace:ReadMe_perso.Views"
+    Shell.FlyoutBehavior="Flyout"
+    Title="ReadMe-perso">
+
+    <FlyoutItem Title="Bibliothèque" Icon="book.png">
+        <ShellContent 
+            Title="Bibliothèque"
+            ContentTemplate="{DataTemplate views:LibraryPage}"
+            Route="library" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Gestion des Tags" Icon="tag.png">
+        <ShellContent 
+            Title="Gestion des Tags"
+            ContentTemplate="{DataTemplate views:TagManagementPage}"
+            Route="tags" />
+    </FlyoutItem>
+
+    <ShellContent
+        Title="Liseuse"
+        ContentTemplate="{DataTemplate views:ReaderPage}"
+        Route="reader" />
+
+</Shell>
