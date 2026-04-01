@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ReadMe_perso.Views.LibraryPage"
+             Title="Bibliothèque">
+
+    <Grid RowDefinitions="Auto,Auto,*" RowSpacing="15" Padding="10">
+        
+        <!-- Sort Button -->
+        <Button 
+            Grid.Row="0"
+            Text="Trier par date d'ajout"
+            Command="{Binding SortByDateCommand}"
+            BackgroundColor="#512BD4"
+            TextColor="White"
+            CornerRadius="10"
+            Padding="15" />
+
+        <!-- Tag Filter -->
+        <ScrollView Grid.Row="1" Orientation="Horizontal">
+            <CollectionView 
+                ItemsSource="{Binding Tags}"
+                SelectionMode="Multiple"
+                SelectionChangedCommand="{Binding FilterByTagsCommand}"
+                SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame 
+                            CornerRadius="20"
+                            Padding="15,8"
+                            HasShadow="True"
+                            BackgroundColor="White">
+                            <Label 
+                                Text="{Binding Name}"
+                                TextColor="{Binding Color}"
+                                FontSize="14"
+                                FontAttributes="Bold" />
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
+
+        <!-- Books Grid -->
+        <CollectionView 
+            Grid.Row="2"
+            ItemsSource="{Binding Books}"
+            SelectionMode="Single">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout 
+                    Orientation="Vertical"
+                    HorizontalItemSpacing="10"
+                    VerticalItemSpacing="10"
+                    Span="2" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame 
+                        CornerRadius="15"
+                        Padding="0"
+                        HasShadow="True"
+                        BackgroundColor="White">
+                        <VerticalStackLayout Spacing="8" Padding="10">
+                            <!-- Book Cover -->
+                            <Frame 
+                                CornerRadius="10"
+                                Padding="0"
+                                HasShadow="False"
+                                BackgroundColor="#F5F5F5"
+                                HeightRequest="150">
+                                <Label
+                                    Text="📖"
+                                    FontSize="60"
+                                    HorizontalTextAlignment="Center"
+                                    VerticalTextAlignment="Center" />
+                            </Frame>
+
+                            <!-- Title -->
+                            <Label 
+                                Text="{Binding Title}"
+                                FontSize="14"
+                                FontAttributes="Bold"
+                                LineBreakMode="TailTruncation" />
+
+                            <!-- Author -->
+                            <Label 
+                                Text="{Binding Author}"
+                                FontSize="12"
+                                TextColor="#666666"
+                                LineBreakMode="TailTruncation" />
+
+                            <!-- Date -->
+                            <Label 
+                                Text="{Binding DateAdded, StringFormat='{0:dd/MM/yyyy}'}"
+                                FontSize="11"
+                                TextColor="#999999" />
+
+                            <!-- Progress -->
+                            <ProgressBar 
+                                Progress="{Binding CurrentPage, Converter={StaticResource ProgressConverter}}"
+                                ProgressColor="#512BD4"
+                                BackgroundColor="#E0E0E0" />
+
+                            <!-- Read Button -->
+                            <Button 
+                                Text="Lire"
+                                BackgroundColor="#512BD4"
+                                TextColor="White"
+                                CornerRadius="8"
+                                Padding="10"
+                                Clicked="OnReadClicked" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>
