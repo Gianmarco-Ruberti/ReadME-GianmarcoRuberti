@@ -30,6 +30,7 @@ namespace ReadMe
             builder.Services.AddSingleton<BookDetailPage>();
             builder.Services.AddSingleton<ReaderPage>();
             builder.Services.AddSingleton<TagsPage>();
+            builder.Services.AddSingleton<SettingsPage>();
 
 #if DEBUG
     		builder.Logging.AddDebug();
