@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Maui.Controls;
+using ReadMe.ViewModels;
 
 namespace ReadMe.Views
 {
@@ -8,6 +9,7 @@ namespace ReadMe.Views
         public BookDetailPage()
         {
             InitializeComponent();
+            BindingContext = new BookViewModel();
         }
     }
 }
