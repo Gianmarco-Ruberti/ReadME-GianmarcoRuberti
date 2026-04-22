@@ -31,6 +31,7 @@ namespace ReadMe
             builder.Services.AddSingleton<ReaderPage>();
             builder.Services.AddSingleton<TagsPage>();
             builder.Services.AddSingleton<SettingsPage>();
+            builder.Services.AddSingleton<EditTagPage>();
 
 #if DEBUG
     		builder.Logging.AddDebug();

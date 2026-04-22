@@ -99,4 +99,8 @@
         Route="settings"
         ContentTemplate="{DataTemplate views:SettingsPage}" />
 
+    <ShellContent
+        Route="edittag"
+        ContentTemplate="{DataTemplate views:EditTagPage}" />
+
 </Shell>
