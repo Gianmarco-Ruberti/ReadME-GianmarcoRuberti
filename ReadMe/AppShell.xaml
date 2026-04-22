@@ -4,12 +4,31 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:ReadMe"
-    Shell.FlyoutBehavior="Disabled"
+    xmlns:views="clr-namespace:ReadMe.Views"
+    Shell.FlyoutBehavior="Flyout"
     Title="ReadMe">
 
+    <TabBar>
+        <ShellContent
+            Title="Accueil"
+            Icon="home.png"
+            ContentTemplate="{DataTemplate views:HomePage}"
+            Route="home" />
+
+        <ShellContent
+            Title="Tags"
+            Icon="tag.png"
+            ContentTemplate="{DataTemplate views:TagsPage}"
+            Route="tags" />
+    </TabBar>
+
+    <!-- Routes pour la navigation -->
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        Route="bookdetail"
+        ContentTemplate="{DataTemplate views:BookDetailPage}" />
+
+    <ShellContent
+        Route="reader"
+        ContentTemplate="{DataTemplate views:ReaderPage}" />
 
 </Shell>
