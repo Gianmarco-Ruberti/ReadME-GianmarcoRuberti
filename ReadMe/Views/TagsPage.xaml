@@ -1,10 +1,82 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ReadMe.Views.TagsPage">
+             x:Class="ReadMe.Views.TagsPage"
+             Title="Gestion des Tags">
     <ContentPage.Content>
-        <!-- Gestion des tags -->
-        <StackLayout>
-        </StackLayout>
+        <Grid RowDefinitions="Auto,*" RowSpacing="15" Padding="15">
+            
+            <!-- Formulaire ajouter tag -->
+            <ScrollView Grid.Row="0">
+                <Frame CornerRadius="10" Padding="15" HasShadow="True" BackgroundColor="#F9F9F9">
+                    <StackLayout Spacing="10">
+                        <Label Text="Ajouter un nouveau tag" FontSize="16" FontAttributes="Bold" TextColor="#512BD4" />
+                        
+                        <Frame CornerRadius="5" Padding="0" HasShadow="False" BackgroundColor="White">
+                            <Entry Placeholder="Nom du tag" 
+                                  Text="{Binding NewTagName}" />
+                        </Frame>
+                        
+                        <StackLayout Orientation="Horizontal" Spacing="10">
+                            <Label Text="Couleur :" VerticalOptions="Center" FontSize="14" />
+                            <Frame CornerRadius="5" Padding="0" HasShadow="False" BackgroundColor="White" HorizontalOptions="FillAndExpand">
+                                <Entry Placeholder="#512BD4" 
+                                      Text="{Binding NewTagColor}" />
+                            </Frame>
+                            <BoxView Color="{Binding NewTagColor}" 
+                                    WidthRequest="40" 
+                                    HeightRequest="40" 
+                                    CornerRadius="5" />
+                        </StackLayout>
+                        
+                        <Button Text="➕ Ajouter" 
+                               Command="{Binding AddTagCommand}"
+                               BackgroundColor="#4CAF50" 
+                               TextColor="White" 
+                               CornerRadius="10" 
+                               Padding="15" />
+                    </StackLayout>
+                </Frame>
+            </ScrollView>
+
+            <!-- Barre de recherche et liste des tags -->
+            <StackLayout Grid.Row="1" Spacing="10">
+                <SearchBar Placeholder="Rechercher un tag..." 
+                          SearchButtonPressed="OnSearchButtonPressed" />
+
+                <!-- Liste des tags avec scroll -->
+                <CollectionView ItemsSource="{Binding Tags}">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame CornerRadius="10" Padding="15" HasShadow="True" BackgroundColor="White">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                    
+                                    <!-- Info du tag -->
+                                    <VerticalStackLayout Grid.Column="0" Spacing="5">
+                                        <Label Text="{Binding Name}" FontSize="16" FontAttributes="Bold" />
+                                        <StackLayout Orientation="Horizontal" Spacing="5">
+                                            <BoxView Color="{Binding Color}" WidthRequest="20" HeightRequest="20" CornerRadius="3" />
+                                            <Label Text="{Binding Color}" FontSize="11" TextColor="#999999" />
+                                        </StackLayout>
+                                    </VerticalStackLayout>
+
+                                    <!-- Boutons action -->
+                                    <StackLayout Grid.Column="1" Orientation="Horizontal" Spacing="8" HorizontalOptions="End">
+                                        <Button Text="✏️" BackgroundColor="#2196F3" TextColor="White" CornerRadius="5" Padding="10,5" Clicked="OnEditTagClicked" />
+                                        <Button Text="🗑️" BackgroundColor="#F44336" TextColor="White" CornerRadius="5" Padding="10,5" 
+                                               Command="{Binding DeleteTagCommand}" CommandParameter="{Binding .}" />
+                                    </StackLayout>
+                                    
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </StackLayout>
+
+        </Grid>
     </ContentPage.Content>
 </ContentPage>
