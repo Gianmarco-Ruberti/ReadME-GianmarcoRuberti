@@ -16,16 +16,30 @@ namespace ReadMe.Views
             BindingContext = _viewModel;
         }
 
+        // Déclenché à chaque fois que la page s'affiche
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            if (_viewModel != null)
+            {
+                await _viewModel.LoadTagsAsync();
+            }
+        }
+
         private void OnSearchButtonPressed(object sender, EventArgs e)
         {
-            // Logique de recherche de tags
+            if (sender is SearchBar searchBar)
+            {
+                // transmet le texte de recherche au ViewModel
+                _viewModel.SearchTagsCommand.Execute(searchBar.Text);
+            }
         }
 
         private async void OnEditTagClicked(object sender, EventArgs e)
         {
-            if (sender is Button button && button.BindingContext is Tag tag)
+            if (sender is Button button && button.BindingContext is Tag selectedTag)
             {
-                await Shell.Current.GoToAsync($"edittag?tagId={tag.Id}");
+                await Shell.Current.GoToAsync($"edittag?tagId={selectedTag.Id}");
             }
         }
     }
