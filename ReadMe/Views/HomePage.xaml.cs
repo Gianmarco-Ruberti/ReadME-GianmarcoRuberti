@@ -7,11 +7,21 @@ namespace ReadMe.Views
 {
     public partial class HomePage : ContentPage
     {
+        private readonly BookViewModel _viewModel;
+
         public HomePage()
         {
             InitializeComponent();
-            BindingContext = new BookViewModel();
+            _viewModel = new BookViewModel();
+            BindingContext = _viewModel;
         }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            _viewModel.LoadData();
+        }
+
         private async void OnReadClicked(object sender, EventArgs e)
         {
             if (sender is Button button && button.BindingContext is Book book)

@@ -22,7 +22,7 @@
                 ItemsSource="{Binding Tags}"
                 SelectionMode="Multiple"
                 SelectionChangedCommand="{Binding FilterByTagsCommand}"
-                SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">
+                SelectionChangedCommandParameter="{Binding SelectedItems, Source={RelativeSource Self}}">
                 <CollectionView.ItemsLayout>
                     <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10" />
                 </CollectionView.ItemsLayout>
@@ -100,7 +100,7 @@
 
                             <!-- Progress -->
                             <ProgressBar 
-                                Progress="{Binding CurrentPage, Converter={StaticResource ProgressConverter}}"
+                                Progress="{Binding Progress}"
                                 ProgressColor="#512BD4"
                                 BackgroundColor="#E0E0E0" />
 
