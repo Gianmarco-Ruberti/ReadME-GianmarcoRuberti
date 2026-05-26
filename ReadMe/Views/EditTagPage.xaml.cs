@@ -53,12 +53,12 @@ namespace ReadMe.Views
             tagService.UpdateTag(_viewModel.CurrentTag);
 
             await DisplayAlert("Succès", "Tag mis à jour avec succès", "OK");
-            await Shell.Current.GoToAsync("tags");
+            await Shell.Current.GoToAsync("tagsPage");
         }
 
         private async void OnCancelClicked(object sender, EventArgs e)
         {
-            await Shell.Current.GoToAsync("tags");
+            await Shell.Current.GoToAsync("tagsPage");
         }
 
         private void OnColorTapped(object sender, TappedEventArgs e)
