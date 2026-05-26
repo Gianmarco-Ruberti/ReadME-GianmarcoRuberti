@@ -61,6 +61,9 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Frame CornerRadius="20" Padding="12,6" BackgroundColor="White" HasShadow="True">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnAvailableTagTapped" />
+                                </Frame.GestureRecognizers>
                                 <Label Text="{Binding Name}" FontSize="12" TextColor="#666666" />
                             </Frame>
                         </DataTemplate>
@@ -70,8 +73,8 @@
 
             <!-- Boutons d'action -->
             <StackLayout Spacing="10" Margin="0,20,0,0">
-                <Button Text="💾 Enregistrer" BackgroundColor="#4CAF50" TextColor="White" CornerRadius="10" Padding="15" />
-                <Button Text="🗑️ Supprimer" BackgroundColor="#F44336" TextColor="White" CornerRadius="10" Padding="15" />
+                <Button Text="💾 Enregistrer" BackgroundColor="#4CAF50" TextColor="White" CornerRadius="10" Padding="15" Clicked="OnSaveClicked" />
+                <Button Text="🗑️ Supprimer" BackgroundColor="#F44336" TextColor="White" CornerRadius="10" Padding="15" Clicked="OnDeleteClicked" />
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>
