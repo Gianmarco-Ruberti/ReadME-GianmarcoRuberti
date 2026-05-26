@@ -1,7 +1,12 @@
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Controls;
 using ReadMe.Models;
 using ReadMe.Services;
 
@@ -34,7 +39,6 @@ namespace ReadMe.ViewModels
             set { _newTagName = value; OnPropertyChanged(); }
         }
 
-        private string newTagColor = "#512BD4"; // Couleur par d�faut
         public string NewTagColor
         {
             get => _newTagColor;
@@ -55,81 +59,122 @@ namespace ReadMe.ViewModels
         public TagViewModel()
         {
             _tagService = MauiProgram.GetService<TagService>();
-            InitializeTags();
 
-            AddTagCommand = new Command(AddTag);
-            DeleteTagCommand = new Command<Tag>(DeleteTag);
-            UpdateTagCommand = new Command<Tag>(UpdateTag);
-            SearchTagsCommand = new Command<string>(SearchTags);
+            // Initialisation de la collection pour éviter des erreurs de Binding au démarrage
+            Tags = new ObservableCollection<Tag>();
+
+            // Liaison des commandes avec les méthodes asynchrones adaptées
+            AddTagCommand = new Command(async () => await AddTagAsync());
+            DeleteTagCommand = new Command<Tag>(async (tag) => await DeleteTagAsync(tag));
+            UpdateTagCommand = new Command<Tag>(async (tag) => await UpdateTagAsync(tag));
+            SearchTagsCommand = new Command<string>(async (text) => await SearchTagsAsync(text));
         }
 
-        private void InitializeTags()
+        // Charge les données depuis le service de manière asynchrone
+        public async Task LoadTagsAsync()
         {
-            var tagList = _tagService.GetAllTags();
-            Tags = new ObservableCollection<Tag>(tagList);
+            try
+            {
+                var tagList = await _tagService.GetTagsAsync();
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    Tags.Clear();
+                    foreach (var tag in tagList.OrderBy(t => t.Name))
+                    {
+                        Tags.Add(tag);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[Error LoadTags]: {ex.Message}");
+            }
         }
 
-        private void AddTag()
+        private async Task AddTagAsync()
         {
             if (string.IsNullOrWhiteSpace(NewTagName))
             {
-                MainThread.BeginInvokeOnMainThread(async () =>
-                {
-                    await Application.Current.MainPage.DisplayAlert("Erreur", "Le nom du tag ne peut pas être vide", "OK");
-                });
+                await Application.Current.MainPage.DisplayAlert("Erreur", "Le nom du tag ne peut pas être vide", "OK");
                 return;
             }
 
             var newTag = new Tag { Name = NewTagName, Color = NewTagColor };
-            _tagService.AddTag(newTag);
-            Tags.Add(newTag);
 
-            NewTagName = string.Empty;
-            NewTagColor = "#512BD4";
-        }
+            // Appel à l'API via le service
+            bool success = await _tagService.CreateTagAsync(newTag);
 
-        private void DeleteTag(Tag tag)
-        {
-            if (tag != null)
+            if (success)
             {
-                _tagService.DeleteTag(tag.Id);
-                Tags.Remove(tag);
-            }
-        }
+                // On recharge proprement la liste depuis la BDD pour avoir le bon ID généré par l'API
+                await LoadTagsAsync();
 
-        private void UpdateTag(Tag tag)
-        {
-            if (tag != null)
-            {
-                _tagService.UpdateTag(tag);
-                OnPropertyChanged(nameof(Tags));
-            }
-        }
-
-        public async Task LoadTagsAsync()
-        {
-            await Task.Run(() => InitializeTags());
-        }
-
-        private void SearchTags(string searchText)
-        {
-            if (string.IsNullOrWhiteSpace(searchText))
-            {
-                InitializeTags();
+                // Réinitialisation des champs du formulaire
+                NewTagName = string.Empty;
+                NewTagColor = "#512BD4";
             }
             else
             {
-                var filteredTags = _tagService.GetAllTags()
-                    .Where(t => t.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
-                Tags = new ObservableCollection<Tag>(filteredTags);
+                await Application.Current.MainPage.DisplayAlert("Erreur", "Impossible d'ajouter le tag sur le serveur", "OK");
             }
         }
 
+        private async Task DeleteTagAsync(Tag tag)
+        {
+            if (tag == null) return;
+
+            bool confirm = await Application.Current.MainPage.DisplayAlert("Confirmation", $"Supprimer le tag '{tag.Name}' ?", "Oui", "Non");
+            if (!confirm) return;
+
+            bool success = await _tagService.DeleteTagAsync(tag.Id);
+
+            if (success)
+            {
+                Tags.Remove(tag);
+            }
+            else
+            {
+                await Application.Current.MainPage.DisplayAlert("Erreur", "Impossible de supprimer le tag sur le serveur", "OK");
+            }
+        }
+
+        private async Task UpdateTagAsync(Tag tag)
+        {
+            if (tag == null) return;
+
+            // TODO: Si tu as une méthode UpdateTagAsync dans ton TagService, appelle-la ici
+            // bool success = await _tagService.UpdateTagAsync(tag);
+
+            OnPropertyChanged(nameof(Tags));
+        }
+
+        private async Task SearchTagsAsync(string searchText)
+        {
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                await LoadTagsAsync();
+            }
+            else
+            {
+                var tagList = await _tagService.GetTagsAsync();
+                var filteredTags = tagList
+                    .Where(t => t.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                Tags.Clear();
+                foreach (var tag in filteredTags)
+                {
+                    Tags.Add(tag);
+                }
+            }
+        }
+
+        #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string name = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        #endregion
     }
 }
-
