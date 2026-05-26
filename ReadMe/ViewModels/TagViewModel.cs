@@ -3,111 +3,133 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using ReadMe.Models;
+using ReadMe.Services;
 
 namespace ReadMe.ViewModels
 {
     public class TagViewModel : INotifyPropertyChanged
     {
-        // Liste observable connectée à la CollectionView du XAML
-        public ObservableCollection<Tag> Tags { get; set; } = new ObservableCollection<Tag>();
-
+        private readonly TagService _tagService;
+        private Tag _tag;
         private Tag _currentTag;
+        private string _newTagName = string.Empty;
+        private string _newTagColor = "#512BD4";
+        private ObservableCollection<Tag> _tags;
+
+        public Tag Tag
+        {
+            get => _tag;
+            set { _tag = value; OnPropertyChanged(); }
+        }
+
         public Tag CurrentTag
         {
             get => _currentTag;
-            set
-            {
-                _currentTag = value;
-                OnPropertyChanged(); // Notifie le XAML du changement
-            }
+            set { _currentTag = value; OnPropertyChanged(); }
         }
 
-        private string _newTagName;
         public string NewTagName
         {
             get => _newTagName;
             set { _newTagName = value; OnPropertyChanged(); }
         }
 
-        private string _newTagColor = "#512BD4"; // Couleur par défaut
+        private string newTagColor = "#512BD4"; // Couleur par dï¿½faut
         public string NewTagColor
         {
             get => _newTagColor;
             set { _newTagColor = value; OnPropertyChanged(); }
         }
 
-        // Commandes utilisées par le XAML
+        public ObservableCollection<Tag> Tags
+        {
+            get => _tags;
+            set { _tags = value; OnPropertyChanged(); }
+        }
+
         public ICommand AddTagCommand { get; }
         public ICommand DeleteTagCommand { get; }
+        public ICommand UpdateTagCommand { get; }
         public ICommand SearchTagsCommand { get; }
 
         public TagViewModel()
         {
-            AddTagCommand = new Command(async () => await AddTagAsync());
-            DeleteTagCommand = new Command<Tag>(async (tag) => await DeleteTagAsync(tag));
-            SearchTagsCommand = new Command<string>(async (query) => await SearchTagsAsync(query));
+            _tagService = MauiProgram.GetService<TagService>();
+            InitializeTags();
+
+            AddTagCommand = new Command(AddTag);
+            DeleteTagCommand = new Command<Tag>(DeleteTag);
+            UpdateTagCommand = new Command<Tag>(UpdateTag);
+            SearchTagsCommand = new Command<string>(SearchTags);
         }
 
-        //Appel API : Charger la liste des tags
-        public async Task LoadTagsAsync()
+        private void InitializeTags()
         {
-            try
-            {
-                // TODO: Remplace par ton appel API réel (HttpClient)
-                // var tagsFromApi = await _apiService.GetTagsAsync();
-
-                Tags.Clear();
-                // Simulation de données pour tester ton XAML immédiatement :
-                Tags.Add(new Tag { Id = 1, Name = "Roman", Color = "#FF5733" });
-                Tags.Add(new Tag { Id = 2, Name = "Sci-Fi", Color = "#33FF57" });
-            }
-            catch (Exception ex)
-            {
-                await App.Current.MainPage.DisplayAlert("Erreur", "Impossible de charger les tags", "OK");
-            }
+            var tagList = _tagService.GetAllTags();
+            Tags = new ObservableCollection<Tag>(tagList);
         }
 
-        private async Task AddTagAsync()
+        private void AddTag()
         {
-            if (string.IsNullOrWhiteSpace(NewTagName)) return;
+            if (string.IsNullOrWhiteSpace(NewTagName))
+            {
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    await Application.Current.MainPage.DisplayAlert("Erreur", "Le nom du tag ne peut pas Ãªtre vide", "OK");
+                });
+                return;
+            }
 
             var newTag = new Tag { Name = NewTagName, Color = NewTagColor };
+            _tagService.AddTag(newTag);
+            Tags.Add(newTag);
 
-            // TODO: Envoi POST à ton API
-            // await _apiService.CreateTagAsync(newTag);
-
-            Tags.Add(newTag); // Ajout visuel direct
-
-            // Réinitialisation du champ de saisie
             NewTagName = string.Empty;
+            NewTagColor = "#512BD4";
         }
 
-        // Appel API : Supprimer un tag
-        private async Task DeleteTagAsync(Tag tag)
+        private void DeleteTag(Tag tag)
         {
-            if (tag == null) return;
-
-            bool confirm = await App.Current.MainPage.DisplayAlert("Confirmation", $"Supprimer le tag '{tag.Name}' ?", "Oui", "Non");
-            if (!confirm) return;
-
-            // TODO: Envoi DELETE à ton API
-            // await _apiService.DeleteTagAsync(tag.Id);
-
-            Tags.Remove(tag);
+            if (tag != null)
+            {
+                _tagService.DeleteTag(tag.Id);
+                Tags.Remove(tag);
+            }
         }
 
-        // Appel API : Filtrer les tags locaux ou via l'API
-        private async Task SearchTagsAsync(string query)
+        private void UpdateTag(Tag tag)
         {
-            // Logique de filtrage (soit en rappelant l'API, soit en filtrant la liste locale)
+            if (tag != null)
+            {
+                _tagService.UpdateTag(tag);
+                OnPropertyChanged(nameof(Tags));
+            }
         }
 
-        #region MVVM PropertyChanged
+        public async Task LoadTagsAsync()
+        {
+            await Task.Run(() => InitializeTags());
+        }
+
+        private void SearchTags(string searchText)
+        {
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                InitializeTags();
+            }
+            else
+            {
+                var filteredTags = _tagService.GetAllTags()
+                    .Where(t => t.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+                Tags = new ObservableCollection<Tag>(filteredTags);
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
+
+        protected void OnPropertyChanged([CallerMemberName] string name = null) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }
+
