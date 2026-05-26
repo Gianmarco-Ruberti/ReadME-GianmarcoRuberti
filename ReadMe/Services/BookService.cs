@@ -28,6 +28,46 @@ namespace ReadMe.Services
                 if (_books.Count > 0)
                     _nextId = _books.Max(b => b.Id) + 1;
             }
+            else
+            {
+                // Données de démonstration de base pour permettre des tests immédiats.
+                _books.Add(new Book
+                {
+                    Id = _nextId++,
+                    Title = "Le Petit Prince",
+                    Author = "Antoine de Saint-Exupéry",
+                    DateAdded = DateTime.Now.AddDays(-7),
+                    Tags = new List<Tag>
+                    {
+                        new Tag { Id = 1, Name = "Fiction", Color = "#FFB300" }
+                    },
+                    Chapters = new List<Chapter>
+                    {
+                        new Chapter { Number = 1, Title = "Chapitre 1", Content = "Ceci est le premier chapitre du livre." },
+                        new Chapter { Number = 2, Title = "Chapitre 2", Content = "Ceci est le deuxième chapitre du livre." }
+                    },
+                    TotalPages = 2,
+                    CurrentPage = 0
+                });
+                _books.Add(new Book
+                {
+                    Id = _nextId++,
+                    Title = "Une Nuit à Paris",
+                    Author = "Marie Dubois",
+                    DateAdded = DateTime.Now.AddDays(-3),
+                    Tags = new List<Tag>
+                    {
+                        new Tag { Id = 2, Name = "Romance", Color = "#D32F2F" }
+                    },
+                    Chapters = new List<Chapter>
+                    {
+                        new Chapter { Number = 1, Title = "Rencontre", Content = "Ce roman raconte une rencontre inattendue." }
+                    },
+                    TotalPages = 1,
+                    CurrentPage = 0
+                });
+                SaveBooks();
+            }
         }
 
         private void SaveBooks()
