@@ -77,13 +77,13 @@
             Title="Accueil"
             Icon="home.png"
             ContentTemplate="{DataTemplate views:HomePage}"
-            Route="home" />
+            Route="homePage" />
 
         <ShellContent
             Title="Tags"
             Icon="tag.png"
             ContentTemplate="{DataTemplate views:TagsPage}"
-            Route="tags" />
+            Route="tagsPage" />
     </TabBar>
 
     <!-- Routes pour la navigation -->

@@ -1,4 +1,8 @@
-﻿namespace ReadMe
+﻿using System;
+using Microsoft.Maui.Controls;
+using ReadMe.Views;
+
+namespace ReadMe
 {
     public partial class AppShell : Shell
     {
@@ -6,31 +10,33 @@
         {
             InitializeComponent();
 
-            Routing.RegisterRoute("homePage", typeof(Views.HomePage));
-            Routing.RegisterRoute("tagsPage", typeof(Views.TagsPage));
-            Routing.RegisterRoute("settingsPage", typeof(Views.SettingsPage));
-            Routing.RegisterRoute("readerPage", typeof(Views.ReaderPage));
-            Routing.RegisterRoute("EditTagPage", typeof (Views.EditTagPage));
-            Routing.RegisterRoute("BookDetailPage", typeof(Views.BookDetailPage));
+            Routing.RegisterRoute("edittag", typeof(EditTagPage));
+            Routing.RegisterRoute("bookdetail", typeof(BookDetailPage));
+            Routing.RegisterRoute("reader", typeof(ReaderPage));
+            Routing.RegisterRoute("settingsPage", typeof(SettingsPage));
         }
 
         private async void OnAccueilClicked(object sender, TappedEventArgs e)
         {
-            await Shell.Current.GoToAsync("homePage");
+            Current.FlyoutIsPresented = false;
+            await Shell.Current.GoToAsync("//homePage");
         }
 
         private async void OnBooksClicked(object sender, TappedEventArgs e)
         {
-            await Shell.Current.GoToAsync("homePage");
+            Current.FlyoutIsPresented = false;
+            await Shell.Current.GoToAsync("//homePage");
         }
 
         private async void OnTagsClicked(object sender, TappedEventArgs e)
         {
-            await Shell.Current.GoToAsync("tagsPage");
+            Current.FlyoutIsPresented = false;
+            await Shell.Current.GoToAsync("//tagsPage");
         }
 
         private async void OnSettingsClicked(object sender, TappedEventArgs e)
         {
+            Current.FlyoutIsPresented = false;
             await Shell.Current.GoToAsync("settingsPage");
         }
     }
