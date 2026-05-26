@@ -1,81 +1,117 @@
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.Json;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
 using ReadMe.Models;
 
 namespace ReadMe.Services
 {
     public class TagService
     {
-        private List<Tag> _tags = new();
-        private readonly string _filePath;
-        private int _nextId = 1;
-        private readonly List<(string Name, string Color)> _defaultTags = new()
-        {
-            ("Fiction", "#FFB300"),
-            ("Science-Fiction", "#1976D2"),
-            ("Policier", "#388E3C"),
-            ("Romance", "#D32F2F"),
-            ("Fantasy", "#7B1FA2")
-        };
+        private readonly HttpClient _httpClient;
+        private readonly string _baseUrl = "https://10.0.2.2:7001/api/tags";
 
-        public TagService(string appDataDirectory)
+        public TagService()
         {
-            _filePath = Path.Combine(appDataDirectory, "tags.json");
-            LoadTags();
+            _httpClient = new HttpClient();
         }
 
-        private void LoadTags()
+
+        public TagService(object fallbackArgument) : this()
         {
-            if (File.Exists(_filePath))
+
+        }
+
+        public async Task<List<Tag>> GetTagsAsync()
+        {
+            try
             {
-                var json = File.ReadAllText(_filePath);
-                _tags = JsonSerializer.Deserialize<List<Tag>>(json) ?? new();
-                if (_tags.Count > 0)
-                    _nextId = _tags.Max(t => t.Id) + 1;
+                var response = await _httpClient.GetFromJsonAsync<List<Tag>>(_baseUrl);
+                return response ?? new List<Tag>();
             }
-            else
+            catch (Exception ex)
             {
-                foreach (var (name, color) in _defaultTags)
-                {
-                    _tags.Add(new Tag { Id = _nextId++, Name = name, Color = color });
-                }
-                SaveTags();
+                System.Diagnostics.Debug.WriteLine($"[TagService GET Error]: {ex.Message}");
+                return new List<Tag>();
             }
         }
 
-        private void SaveTags()
+        public async Task<bool> CreateTagAsync(Tag tag)
         {
-            var json = JsonSerializer.Serialize(_tags);
-            File.WriteAllText(_filePath, json);
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync(_baseUrl, tag);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[TagService POST Error]: {ex.Message}");
+                return false;
+            }
         }
 
-        public List<Tag> GetAllTags() => _tags;
-        public Tag GetTagById(int id) => _tags.FirstOrDefault(t => t.Id == id);
-        public void AddTag(Tag tag)
+        public async Task<bool> DeleteTagAsync(int id)
         {
-            tag.Id = _nextId++;
-            _tags.Add(tag);
-            SaveTags();
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"{_baseUrl}/{id}");
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[TagService DELETE Error]: {ex.Message}");
+                return false;
+            }
         }
+
+        public async Task<bool> UpdateTagAsync(Tag tag)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"{_baseUrl}/{tag.Id}", tag);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[TagService PUT Error]: {ex.Message}");
+                return false;
+            }
+        }
+
+
+        public List<Tag> GetAllTags()
+        {
+            return Task.Run(async () => await GetTagsAsync()).Result;
+        }
+
+        public Tag GetTagById(int id)
+        {
+            try
+            {
+                return Task.Run(async () => await _httpClient.GetFromJsonAsync<Tag>($"{_baseUrl}/{id}")).Result;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public void UpdateTag(Tag tag)
         {
-            var index = _tags.FindIndex(t => t.Id == tag.Id);
-            if (index >= 0)
-            {
-                _tags[index] = tag;
-                SaveTags();
-            }
+            if (tag == null) return;
+            Task.Run(async () => await UpdateTagAsync(tag)).Wait();
         }
+
+        public void AddTag(Tag tag)
+        {
+            if (tag == null) return;
+            Task.Run(async () => await CreateTagAsync(tag)).Wait();
+        }
+
         public void DeleteTag(int id)
         {
-            var tag = _tags.FirstOrDefault(t => t.Id == id);
-            if (tag != null)
-            {
-                _tags.Remove(tag);
-                SaveTags();
-            }
+            Task.Run(async () => await DeleteTagAsync(id)).Wait();
         }
     }
 }
