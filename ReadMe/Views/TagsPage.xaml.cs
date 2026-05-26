@@ -39,7 +39,7 @@ namespace ReadMe.Views
         {
             if (sender is Button button && button.BindingContext is Tag selectedTag)
             {
-                await Shell.Current.GoToAsync($"edittag?tagId={selectedTag.Id}");
+                await Shell.Current.GoToAsync($"///edittag?tagId={selectedTag.Id}");
             }
         }
     }
