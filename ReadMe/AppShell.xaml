@@ -72,7 +72,7 @@
     </Shell.FlyoutContent>
 
     <!-- Navigation par onglets -->
-    <TabBar>
+    <TabBar x:Name="MainTabBar">
         <ShellContent
             Title="Accueil"
             Icon="home.png"
@@ -86,21 +86,11 @@
             Route="tagsPage" />
     </TabBar>
 
-    <!-- Routes pour la navigation -->
-    <ShellContent
-        Route="bookdetail"
-        ContentTemplate="{DataTemplate views:BookDetailPage}" />
-
-    <ShellContent
-        Route="reader"
-        ContentTemplate="{DataTemplate views:ReaderPage}" />
-
-    <ShellContent
-        Route="settings"
-        ContentTemplate="{DataTemplate views:SettingsPage}" />
-
-    <ShellContent
-        Route="edittag"
-        ContentTemplate="{DataTemplate views:EditTagPage}" />
+    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
+        <ShellContent
+            Title="Paramètres"
+            ContentTemplate="{DataTemplate views:SettingsPage}"
+            Route="settingsPage" />
+    </FlyoutItem>
 
 </Shell>

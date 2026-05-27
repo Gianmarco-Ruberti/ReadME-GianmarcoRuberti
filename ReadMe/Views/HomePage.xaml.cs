@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.Maui.Controls;
 using ReadMe.Models;
 using ReadMe.ViewModels;
@@ -12,14 +12,27 @@ namespace ReadMe.Views
         public HomePage()
         {
             InitializeComponent();
-            _viewModel = new BookViewModel();
+
+            _viewModel = MauiProgram.GetService<BookViewModel>();
+
             BindingContext = _viewModel;
         }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            _viewModel.LoadData();
+
+            if (BindingContext is BookViewModel viewModel)
+            {
+                try
+                {
+                    viewModel.LoadData();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[Erreur chargement HomePage]: {ex.Message}");
+                }
+            }
         }
 
         private async void OnReadClicked(object sender, EventArgs e)

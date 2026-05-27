@@ -13,7 +13,6 @@ namespace ReadMe
             Routing.RegisterRoute("edittag", typeof(EditTagPage));
             Routing.RegisterRoute("bookdetail", typeof(BookDetailPage));
             Routing.RegisterRoute("reader", typeof(ReaderPage));
-            Routing.RegisterRoute("settingsPage", typeof(SettingsPage));
         }
 
         private async void OnAccueilClicked(object sender, TappedEventArgs e)
@@ -37,7 +36,7 @@ namespace ReadMe
         private async void OnSettingsClicked(object sender, TappedEventArgs e)
         {
             Current.FlyoutIsPresented = false;
-            await Shell.Current.GoToAsync("settingsPage");
+            await Shell.Current.GoToAsync("//settingsPage");
         }
     }
 }
